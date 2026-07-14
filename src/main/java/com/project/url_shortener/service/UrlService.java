@@ -1,6 +1,7 @@
 package com.project.url_shortener.service;
 
 import com.project.url_shortener.exception.DuplicateAliasException;
+import com.project.url_shortener.exception.ResourceNotFoundException;
 import com.project.url_shortener.model.ShortenResponse;
 import com.project.url_shortener.model.UrlMapping;
 import com.project.url_shortener.repository.UrlMappingRepository;
@@ -58,5 +59,11 @@ public class UrlService {
                 .shortCode(shortCode)
                 .shortUrl(shortUrl)
                 .build();
+    }
+
+    @Transactional
+    public String getOriginalUrl(String shortCode) {
+        UrlMapping url = repository.findByShortCode(shortCode).orElseThrow(() -> new ResourceNotFoundException("error"));
+        return url.getOriginalUrl();
     }
 }
