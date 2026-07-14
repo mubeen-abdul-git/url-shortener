@@ -1,6 +1,6 @@
 package com.project.url_shortener.util;
 
-import org.springframework.web.util.InvalidUrlException;
+import com.project.url_shortener.exception.InvalidUrlException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
