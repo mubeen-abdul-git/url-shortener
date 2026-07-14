@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class UrlService {
@@ -61,9 +63,17 @@ public class UrlService {
                 .build();
     }
 
+    // Looks up the original URL and increments the click counter
     @Transactional
     public String getOriginalUrl(String shortCode) {
-        UrlMapping url = repository.findByShortCode(shortCode).orElseThrow(() -> new ResourceNotFoundException("error"));
-        return url.getOriginalUrl();
+        UrlMapping mapping = repository.findByShortCode(shortCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Short code '" + shortCode + "' not found"));
+
+        // Update analytics
+        mapping.setClickCount(mapping.getClickCount() + 1);
+        mapping.setLastAccessedAt(LocalDateTime.now());
+        repository.save(mapping);
+
+        return mapping.getOriginalUrl();
     }
 }
